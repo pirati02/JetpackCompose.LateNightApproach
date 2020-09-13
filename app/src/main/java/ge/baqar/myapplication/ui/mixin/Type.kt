@@ -1,4 +1,4 @@
-package ge.baqar.myapplication.ui
+package ge.baqar.myapplication.ui.mixin
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
