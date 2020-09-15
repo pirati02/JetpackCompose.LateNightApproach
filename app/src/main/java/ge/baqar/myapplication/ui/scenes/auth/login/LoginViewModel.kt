@@ -51,6 +51,7 @@ class LoginViewModel(
         return when (intent) {
             is LoginAction -> doLogin(intent.email, intent.password)
             is RegisterAction -> TODO()
+            is SetInitialStateAction -> AuthState.DEFAULT
         }
     }
 }

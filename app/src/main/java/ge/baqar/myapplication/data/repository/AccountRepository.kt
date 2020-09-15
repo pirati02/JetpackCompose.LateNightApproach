@@ -11,9 +11,10 @@ import ge.baqar.myapplication.data.remote.service.AuthService
 import ge.baqar.myapplication.ui.scenes.arch.ReactiveResult
 import ge.baqar.myapplication.ui.scenes.arch.asError
 import ge.baqar.myapplication.ui.scenes.arch.asSuccess
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.IOException
 
@@ -26,8 +27,18 @@ class AccountRepositoryImpl(val authService: AuthService, val networkStatus: Net
         coroutineScope {
             if (networkStatus.isOnline()) {
                 try {
-                    val result = async { authService.login(request) }.await()
-                    result.value?.asSuccess!!
+                    val result = withContext(Dispatchers.Default) {
+                            authService.login(request)
+                        }
+                    return@coroutineScope if (result.value == null)
+                        object : DomainError {
+                            override val message: String?
+                                get() = result.errorMessage
+                            override val exception: Exception?
+                                get() = Exception(result.errorMessage)
+                        }.asError
+                    else
+                        result.value?.asSuccess!!
                 } catch (e: Exception) {
                     Timber.e(e)
                     when (e) {
