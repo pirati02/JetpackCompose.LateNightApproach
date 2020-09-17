@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.google.gson.Gson
-import ge.baqar.myapplication.ui.scenes.auth.state.UserState
+import ge.baqar.myapplication.ui.scenes.auth.state.AppState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.java.KoinJavaComponent.inject
 
@@ -81,6 +81,10 @@ class StoragePrefs {
         osName = "android"
         appVersion = "2.3.3"
     }
+
+    fun clearUserInfo() {
+        userInfo = null
+    }
 }
 
 data class UserStorageInfo(
@@ -105,8 +109,8 @@ data class UserStorageInfo(
         return if (json != null) Gson().fromJson(json, UserStorageInfo::class.java) else null
     }
 
-    fun asUserInfo(): UserState.UserInfo? {
-        return UserState.UserInfo(
+    fun asUserInfo(): AppState.UserInfo? {
+        return AppState.UserInfo(
             userId,
             token,
             firstName,

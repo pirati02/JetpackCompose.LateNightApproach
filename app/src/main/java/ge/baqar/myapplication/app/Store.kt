@@ -1,4 +1,4 @@
-package ge.baqar.myapplication.ui.scenes.auth.login
+package ge.baqar.myapplication.app
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -8,43 +8,37 @@ import ge.baqar.myapplication.data.repository.AccountRepositoryImpl
 import ge.baqar.myapplication.data.storage.StoragePrefs
 import ge.baqar.myapplication.ui.scenes.arch.ReactiveViewModel
 import ge.baqar.myapplication.ui.scenes.arch.fold
-import ge.baqar.myapplication.ui.scenes.auth.state.*
+import ge.baqar.myapplication.ui.scenes.auth.state.AppAction
+import ge.baqar.myapplication.ui.scenes.auth.state.AppState
+import ge.baqar.myapplication.ui.scenes.dashboard.state.DashboardState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 @ExperimentalCoroutinesApi
-class LoginViewModel(
-    private val authRepository: AccountRepositoryImpl,
-    private val storage: StoragePrefs
-) : ReactiveViewModel<AuthAction, UserState?>(UserState.DEFAULT) {
-
-
-    override fun handleIntent(action: AuthAction): UserState? {
+class Store(
+    private val storagePrefs: StoragePrefs,
+    private val authRepository: AccountRepositoryImpl
+) : ReactiveViewModel<AppAction, AppState>(AppState.DEFAULT) {
+    override fun handleIntent(action: AppAction): AppState {
         return when (action) {
-            is LoginAction -> doLogin(action.email, action.password)
-            is StoreUserInfoAction -> storeUserInfo(action.userInfo)
-            is RegisterAction -> TODO()
-            is SetInitialStateAction -> UserState.DEFAULT
-            is SetUserInfo -> setUserInfo(action.userInfo)
+            AppAction.SetInitialStateAction -> AppState.DEFAULT
+            is AppAction.LoginAction -> doLogin(action.email, action.password)
+            is AppAction.StoreUserInfoAction -> storeUserInfo(action.userInfo)
+            is AppAction.SetUserInfo -> setUserInfo(action.userInfo)
         }
     }
 
-    private fun setUserInfo(userInfo: UserState.UserInfo?): UserState? {
-        return state?.value?.copy(userInfo = userInfo)
-    }
-
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun doLogin(userName: String?, password: String?): UserState? = runBlocking {
+    private fun doLogin(userName: String?, password: String?): AppState = runBlocking {
         withContext(viewModelScope.coroutineContext) {
             authRepository.login(
                 LoginRequest().create(userName, password)
             ).fold(
-                onLeft = { state?.value?.copy(error = it.exception?.message) },
+                onLeft = { state.value.copy(error = it.exception?.message) },
                 onRight = {
-                    state?.value?.copy(
-                        userInfo = UserState.UserInfo(
+                    state.value.copy(
+                        userInfo = AppState.UserInfo(
                             it.userId,
                             it.token,
                             it.firstName ?: it.firstNameEn,
@@ -64,10 +58,14 @@ class LoginViewModel(
         }
     }
 
-    private fun storeUserInfo(userInfo: UserState.UserInfo?): UserState? {
+    private fun storeUserInfo(userInfo: AppState.UserInfo?): AppState {
         userInfo?.asStorage()?.let { info ->
-            storage.setUserInfo(info)
+            storagePrefs.setUserInfo(info)
         }
-        return state?.value
+        return state.value
+    }
+
+    private fun setUserInfo(userInfo: AppState.UserInfo?): AppState {
+        return state.value.copy(userInfo = userInfo)
     }
 }

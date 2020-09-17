@@ -17,7 +17,7 @@ abstract class ReactiveViewModel<Action, State>(initialState: State) : ViewModel
 
     private val intentChannel = Channel<Action>(Channel.UNLIMITED)
     private val _state = MutableStateFlow(initialState)
-    val state: StateFlow<State>?
+    val state: StateFlow<State>
         get() = _state
 
     init {

@@ -1,8 +1,8 @@
 package ge.baqar.myapplication.ui.scenes.auth
 
+import ge.baqar.myapplication.app.Store
 import ge.baqar.myapplication.data.remote.service.AuthService
 import ge.baqar.myapplication.data.repository.AccountRepositoryImpl
-import ge.baqar.myapplication.ui.scenes.auth.login.LoginViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -13,7 +13,7 @@ val authModule = module {
     single { AccountRepositoryImpl(get(), get()) }
 
     //viewModel
-    single { LoginViewModel(get(), get()) }
+    single { Store(get(), get()) }
     single { AuthViewModel() }
 }
 

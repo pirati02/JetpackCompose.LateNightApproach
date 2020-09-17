@@ -1,28 +1,27 @@
 package ge.baqar.myapplication.ui.scenes.auth.state
 
 import com.google.gson.Gson
-import ge.baqar.myapplication.data.storage.StoragePrefs
 import ge.baqar.myapplication.data.storage.UserStorageInfo
+import ge.baqar.myapplication.ui.scenes.dashboard.state.DashboardAction
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 //Actions
-sealed class AuthAction
-object SetInitialStateAction : AuthAction()
-data class LoginAction(var email: String?, var password: String?) : AuthAction()
-data class StoreUserInfoAction(val userInfo: UserState.UserInfo?) : AuthAction()
-data class SetUserInfo(var userInfo: UserState.UserInfo?) : AuthAction()
-data class RegisterAction(val email: String) : AuthAction()
+sealed class AppAction {
+    data class SetUserInfo(var userInfo: AppState.UserInfo?) : AppAction()
+    object SetInitialStateAction : AppAction()
+    data class LoginAction(var email: String?, var password: String?) : AppAction()
+    data class StoreUserInfoAction(val userInfo: AppState.UserInfo?) : AppAction()
+}
 
 //State
-sealed class AuthState
-data class UserState(
+data class AppState(
     val isInProgress: Boolean,
     val userInfo: UserInfo?,
     val error: String?
-) : AuthState() {
+) {
 
     companion object {
-        val DEFAULT = UserState(
+        val DEFAULT = AppState(
             isInProgress = false,
             error = null,
             userInfo = null
