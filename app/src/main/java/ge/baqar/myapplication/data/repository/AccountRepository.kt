@@ -19,7 +19,10 @@ import timber.log.Timber
 import java.io.IOException
 
 
-class AccountRepositoryImpl(val authService: AuthService, val networkStatus: NetworkStatus) {
+class AccountRepositoryImpl(
+    private val authService: AuthService,
+    private val networkStatus: NetworkStatus
+) {
 
     @ExperimentalCoroutinesApi
     @RequiresApi(Build.VERSION_CODES.M)
@@ -28,8 +31,8 @@ class AccountRepositoryImpl(val authService: AuthService, val networkStatus: Net
             if (networkStatus.isOnline()) {
                 try {
                     val result = withContext(Dispatchers.Default) {
-                            authService.login(request)
-                        }
+                        authService.login(request)
+                    }
                     return@coroutineScope if (result.value == null)
                         object : DomainError {
                             override val message: String?

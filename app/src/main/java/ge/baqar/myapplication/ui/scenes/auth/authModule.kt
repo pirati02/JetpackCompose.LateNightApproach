@@ -13,7 +13,8 @@ val authModule = module {
     single { AccountRepositoryImpl(get(), get()) }
 
     //viewModel
-    single { LoginViewModel(get()) }
+    single { LoginViewModel(get(), get()) }
+    single { AuthViewModel() }
 }
 
 

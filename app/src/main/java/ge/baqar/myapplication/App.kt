@@ -2,6 +2,7 @@ package ge.baqar.myapplication
 
 import android.app.Application
 import ge.baqar.myapplication.data.remote.networkModule
+import ge.baqar.myapplication.data.storage.storageModule
 import ge.baqar.myapplication.ui.scenes.auth.authModule
 import ge.dev.baqar.mycoroutines.utility.utilityModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,6 +24,7 @@ class App : Application() {
 
                 utilityModule,
                 networkModule,
+                storageModule,
 
                 authModule
             ))

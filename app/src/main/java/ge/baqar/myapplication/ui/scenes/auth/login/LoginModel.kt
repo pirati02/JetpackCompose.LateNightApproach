@@ -4,6 +4,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 
 data class LoginModel(
-    val email: MutableState<String> = mutableStateOf(""),
-    val password: MutableState<String> = mutableStateOf("")
+    var email: MutableState<String> = mutableStateOf(""),
+    var password: MutableState<String> = mutableStateOf("")
 )
